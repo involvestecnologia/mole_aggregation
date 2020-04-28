@@ -1,10 +1,10 @@
 const { Client } = require('@elastic/elasticsearch')
 const moment = require('moment')
 
-const client = new Client({ node: 'http://localhost:9200' })
+
+const client = new Client({ node: 'http://localhost:9200'})
 
 async function run () {
-
   let indiceName = "oplog-*"
   let initialDate = moment().utc().startOf('day').add(-1, 'days').format()
   let endDate = moment().utc().endOf('day').add( -1, 'days').format()
@@ -15,20 +15,20 @@ async function run () {
     }
   })
 
-  const data = body.rows.map(row => {
-    const content = {}
-    content.index = { _index: 'monthly-analysis' }
+  
+  let payload = []
+  const meta = { index:{ _index: 'monthly-analysis'}}
     
+  body.rows.forEach((row) => {
+    payload.push(meta)
+    let data = {}
     for (var i = 0; i < row.length; i++) {
-      content[body.columns[i].name] = row[i]
+      data[body.columns[i].name] = row[i]
+      data.timestap = initialDate
     }
-   
-    content.timestap = initialDate
-    return content
+    payload.push(data)
   })
-
-  console.log(data)
-  await client.bulk({ body: data })
+  await client.bulk({ body: payload })
 }
 
 run().catch((err) => {
