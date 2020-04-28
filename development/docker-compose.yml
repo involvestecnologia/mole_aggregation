@@ -1,0 +1,88 @@
+version: '2.2'
+services:
+  elasticsearch_master:
+    build:
+      context: ./elasticsearch
+    container_name: elasticsearch_master
+    environment:
+      - node.name=elasticsearch_master
+      - cluster.name=elasticsearch-cluster
+      - discovery.seed_hosts=elasticsearch_data_one,elasticsearch_data_two
+      - cluster.initial_master_nodes=elasticsearch_master
+      - bootstrap.memory_lock=true
+      - xpack.license.self_generated.type=basic
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - node.master=true
+      - node.data=false
+      - node.ingest=false
+      - network.host=0.0.0.0
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - 9200:9200
+      - 9300:9300
+    networks:
+      - mole
+
+  elasticsearch_data_one:
+    build:
+      context: ./elasticsearch
+    container_name: elasticsearch_data_one
+    environment:
+      - node.name=elasticsearch_data_one
+      - cluster.name=elasticsearch-cluster
+      - discovery.seed_hosts=elasticsearch_master,elasticsearch_data_two
+      - cluster.initial_master_nodes=elasticsearch_master
+      - bootstrap.memory_lock=true
+      - xpack.license.self_generated.type=basic
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - node.master=false
+      - node.data=true
+      - node.ingest=false
+      - network.host=0.0.0.0
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    networks:
+      - mole
+
+  elasticsearch_data_two:
+    build:
+      context: ./elasticsearch
+    container_name: elasticsearch_data_two
+    environment:
+      - node.name=elasticsearch_data_two
+      - cluster.name=elasticsearch-cluster
+      - discovery.seed_hosts=elasticsearch_master,elasticsearch_data_one
+      - cluster.initial_master_nodes=elasticsearch_master
+      - bootstrap.memory_lock=true
+      - xpack.license.self_generated.type=basic
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - node.master=false
+      - node.data=true
+      - node.ingest=false
+      - network.host=0.0.0.0
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    networks:
+      - mole
+      
+  kibana:
+    build:
+      context: ./kibana
+    container_name: kibana
+    links:
+      - elasticsearch_master:elasticsearch
+    ports:
+      - 5601:5601
+    networks:
+      - mole
+
+networks:
+  mole:
+    driver: bridge
