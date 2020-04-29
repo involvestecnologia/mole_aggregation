@@ -4,7 +4,7 @@
   "description": "A tool to aggregate MongoDB OpLog data on ES collected by Mole",
   "main": "mole_aggregation.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node mole_aggregation.js"
   },
   "repository": {
     "type": "git",
@@ -23,6 +23,7 @@
   "homepage": "https://github.com/involvestecnologia/mole_aggregation#readme",
   "dependencies": {
     "@elastic/elasticsearch": "^7.6.1",
+    "dotenv": "^8.2.0",
     "moment": "^2.24.0"
   }
 }
