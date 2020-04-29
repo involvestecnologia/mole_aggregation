@@ -1,11 +1,12 @@
+require('dotenv').config()
+
 const { Client } = require('@elastic/elasticsearch')
 const moment = require('moment')
 
-
-const client = new Client({ node: 'http://localhost:9200'})
+const client = new Client({ node: process.env.ELASTICSEARCH_URL})
 
 async function run () {
-  let indiceName = "oplog-*"
+  let indiceName = process.env.ELASTICSEARCH_INDEX_INPUT
   let initialDate = moment().utc().startOf('day').add(-1, 'days').format()
   let endDate = moment().utc().endOf('day').add( -1, 'days').format()
   
@@ -13,11 +14,12 @@ async function run () {
     body: {
       query: `SELECT database, collection, operation, COUNT(operation) as count FROM "${indiceName}" WHERE timestamp BETWEEN '${initialDate}' AND '${endDate}' GROUP BY database,collection,operation`
     }
+  }).catch((err) => {
+    console.log(err.body.error.reason)
   })
 
-  
   let payload = []
-  const meta = { index:{ _index: 'monthly-analysis'}}
+  const meta = { index:{ _index: process.env.ELASTICSEARCH_INDEX_OUTPUT}}
     
   body.rows.forEach((row) => {
     payload.push(meta)
@@ -28,9 +30,10 @@ async function run () {
     }
     payload.push(data)
   })
-  await client.bulk({ body: payload })
+  
+  await client.bulk({ body: payload }).catch((err) => {
+    console.log(err.body.error.reason)
+  })
 }
 
-run().catch((err) => {
-  console.log(err.body.error.reason)
-})
+run()
