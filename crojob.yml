@@ -12,4 +12,20 @@ spec:
           - name: mole_aggregation
             image: involvestecnologia/mole-aggregation:latest
             imagePullPolicy: Always
+            env:
+              - name: ELASTICSEARCH_URL
+                valueFrom:
+                  configMapKeyRef:
+                    name: mole-aggregation-config
+                    key: elasticsearch.url
+              - name: ELASTICSEARCH_INDEX_INPUT
+                valueFrom:
+                  configMapKeyRef:
+                    name: mole-aggregation-config
+                    key: elasticsearch.index.input
+              - name: ELASTICSEARCH_INDEX_OUTPUT
+                valueFrom:
+                  configMapKeyRef:
+                    name: mole-aggregation-config
+                    key: elasticsearch.index.output
           restartPolicy: Never
