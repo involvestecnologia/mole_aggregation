@@ -1,0 +1,15 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: mole_aggregation
+spec:
+  schedule: "00 6 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: mole_aggregation
+            image: involvestecnologia/mole-aggregation:latest
+            imagePullPolicy: Always
+          restartPolicy: Never
