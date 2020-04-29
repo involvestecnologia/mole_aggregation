@@ -19,6 +19,6 @@ jobs:
       - name: Docker push
         uses: elgohr/Publish-Docker-Github-Action@master
         with:
-          name: involvestecnologia/mole
+          name: involvestecnologia/mole-aggregation
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
