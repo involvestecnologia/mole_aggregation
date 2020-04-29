@@ -26,7 +26,7 @@ async function run () {
     let data = {}
     for (var i = 0; i < row.length; i++) {
       data[body.columns[i].name] = row[i]
-      data.timestap = initialDate
+      data.timestamp = initialDate
     }
     payload.push(data)
   })
