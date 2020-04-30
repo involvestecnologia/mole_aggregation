@@ -1,4 +1,8 @@
-# mole_aggregation
+# Mole Aggregation
+
+This project consists of consolidating information from the Mole project on a monthly basis.
+
+## How to execute the project on your local machine ?
 
 ```json
 PUT _template/monthly-analysis
@@ -38,7 +42,9 @@ PUT _template/monthly-analysis
 PUT monthly-analysis-000001
 PUT monthly-analysis-000001/_aliases/monthly-analysis
 ```
+## How to deploy in production ?
 
+To run the Mole application, just replace the compose parameters and execute:
 ```yaml
 mole_aggregation:
     image: involvestecnologia/mole-aggregation:latest
